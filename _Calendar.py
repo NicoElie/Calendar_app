@@ -161,5 +161,5 @@ class Calendar:
 Elie = Information.Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "fall")
 test = Calendar(2020)
 test.fill_calendar(Elie.get_semester(), 1, 13)
-print(test.monthly_view('december')[13])  # this check for the 14 not the 14
+print(test.monthly_view('december')[13])  # this check for the 14 not the 13
 #print(test.monthly_view('september')[0])
