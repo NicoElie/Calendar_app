@@ -162,7 +162,7 @@ class Course:
         return deadline
 
 
-Elie = Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "Spring")
+Elie = Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "spring")
 Elie.add_class("ECE110")
 course_d = Elie.get_student_courses()[0]
 ECE110 = Course("ECE110", course_d, "AL1")
