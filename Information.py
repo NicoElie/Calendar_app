@@ -18,11 +18,12 @@ for row in reader:
     data.append(row)
 
 row_number = np.shape(data)[0]
-
-# creating a dictionary containing another dictionary in the form of :
-#  {'Name of the Class': {'Section' : ('Time range', 'Days given')}}
-#  Example:
-#  {'ECE120' : {'AB1' : ('9:00AM - 09:50', 'MWF')}}
+"""
+Creating a dictionary containing another dictionary in the form of :
+ {'Name of the Class': {'Section' : ('Time range', 'Days given')}}
+ Example:
+ {'ECE120' : {'AB1' : ('9:00AM - 09:50', 'MWF')}}
+"""
 for i in range(1, row_number):
     if data[i][0] not in data_dic:
         data_dic[data[i][0]] = {data[i][5]: (data[i][6], data[i][7])}
@@ -36,7 +37,7 @@ This class will store important information about students such as:
 - last name
 - email
 - password
-- major
+- Major
 - University (for future updates)
 we may add more methods if needed
 """
