@@ -68,7 +68,7 @@ class Student:
 
     def get_semester(self):  # return semester
         return self.semester
-
+## nn
 
 # -------------------------------------------------------------------------------------------------------------------#
 """
