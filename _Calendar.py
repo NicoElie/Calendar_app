@@ -208,11 +208,44 @@ class Calendar:
         start = (event_start_time[0] * 60 + event_start_time[1]) / 10
         end = (event_start_time[0] * 60 + event_start_time[1] + event_duration) / 10
 
-        i = int(start)
-        while i < int(end):
-            if (self.year_calendar[month - 1][day - 1][i] == None):
-                self.year_calendar[month - 1][day - 1][i] = event_name
-            i += 1
+        """
+            we will look at the position where we start, which is represented by start
+            if 144 - start > duration/10 then we will go with the remaining to the next day
+            available = 144 - start
+            so we will add event in the day until we are left with remaining
+            then we will use that for the next day starting at midnight
+        """
+        available = 144 - int(start)  # available number of row that we could not fill
+        d = event_duration / 10  # duration in terms of row ; 10 min is 1 row
+        # check if we can add all event in the same day
+        if available >= d:  # if true, we can fill the all event in the day
+            i = int(start)
+            while i < int(end):
+                if self.year_calendar[month - 1][day - 1][i] == None:
+                    self.year_calendar[month - 1][day - 1][i] = event_name
+                i += 1
+        elif available < d:
+            remaining = int((start + d) - 144)  # the remaining row to use for the next day
+            row_to_use = 144 - start  # number of row that we can use for the current day
+
+            # add the event for the actual day
+            i = int(start)
+            while i < int(start + row_to_use):
+                if self.year_calendar[month - 1][day - 1][i] == None:
+                    self.year_calendar[month - 1][day - 1][i] = event_name
+                i += 1
+
+            # add the event in the next day with the remaining number of row
+            j = 0  # we start at midnight
+            while j < int(remaining):
+                # check if it is the last day of the month
+                if (day - 1) == len(self.year_calendar[month - 1]) - 1:  # if true,move to the next month and first day
+                    if self.year_calendar[month][0][j] == None:
+                        self.year_calendar[month][0][j] = event_name
+                else:  # stay in the same month but move to the next day
+                    if self.year_calendar[month - 1][day][j] == None:
+                        self.year_calendar[month - 1][day][j] = event_name
+                j += 1
 
 
 
@@ -224,7 +257,9 @@ class Calendar:
 # # print(calendar.monthrange(2020, 3))
 
 my_cal = Calendar(2019)
-my_cal.add_event_to_calendar("quiz for 313", [1, 2], [23, 30], 30)
-print(my_cal.view_month('january')[1])
+my_cal.add_event_to_calendar("quiz for 313", [1, 31], [23, 40], 40)
+print(my_cal.view_month('january')[30])  # january 31
+print('------------------------------------------')
+print(my_cal.view_month('february')[0])  # february first
 
 
