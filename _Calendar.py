@@ -16,7 +16,7 @@ class Calendar:
 - is an array containing array
 """
 
-##hdh
+
 class Calendar:
     def __init__(self, year):
         """
@@ -41,29 +41,30 @@ class Calendar:
         self.len_year_calendar = len(self.year_calendar)
 
         for month in range(self.len_year_calendar):
-            _, num = calendar.monthrange(self.year, month + 1)
+            _, num = calendar.monthrange(self.year, month + 1) # we ignore the first element in the tuple with _,
             i = num
             while i > 0:
                 """
-                The while loop is initializing every day of each month as an array with 145 by 1 np array. 
-                Each 10 minute in a day is represented by a row. We have 145 row, so about 1450 minutes in 1 day;
-                Which is about 24 hours
+                The while loop is initializing every day of each month as an array with 144 by 1 np array. 
+                each row is like 0-10 min then 10-20 min and so on to 1330-1440 min
+                Each 10 minute in a day is represented by a row. We have 145 row, so about 1440 minutes in 1 day;
+                Which is 24 hours
                 """
-                self.year_calendar[month].append(np.empty((145, 1), dtype=object))
+                self.year_calendar[month].append(np.empty((144, 1), dtype=object))
                 i -= 1
         """
         Let's fill holidays in the calendar
         Actually every day is represented by a (145, 1) numpy array with each element set to None.
-        This function will set every holiday day array to "H"
+        This function will set every holiday day array to "Holiday"
         """
-        ## getting all the holidays during the year, and storing it into a list
-        ## The holiday will be of the form ['year', 'month', 'day']
+        # getting all the holidays during the year, and storing it into a list
+        # The holiday will be of the form ['year', 'month', 'day']
         holiday_list = [str(date[0]).split('-') for date in holidays.UnitedStates(years=self.year).items()]
 
-        ## Modifying the calendar day to account for holidays
+        # Modifying the calendar day to account for holidays
         for date in holiday_list:
             for time_slot in range(len(self.year_calendar[int(date[1]) - 1][int(date[2]) - 1])):
-                self.year_calendar[int(date[1]) - 1][int(date[2]) - 1][time_slot] = "H"
+                self.year_calendar[int(date[1]) - 1][int(date[2]) - 1][time_slot] = "Holiday"
 
     def view_month(self, month):
         """
@@ -95,8 +96,7 @@ class Calendar:
         elif month == 'december':
             return self.december
 
-
-    def fill_calendar_classes(self, semester, semester_start, semester_end, courses_list = []):
+    def fill_calendar_classes(self, semester, semester_start, semester_end, courses_list=[]):
         """
         This function is to fill the calendar with default activities for user such as the lectures
         The input for this function is the output of get_time_and_day from Information.py
@@ -107,50 +107,51 @@ class Calendar:
         @:param semester_end is the day regular class ends (not the last day of final!)
 
         @:param courses_list is a list of all the courses taken by a students during the semester.
-        It is a list of 3 elements tuples of the form ('course_name', [start_hour, start_min, the duration of the class in minutes], a list of all the day during which the course is given)
-        Example. If ECE 313 was given every monday, wednesday and friday from 1:10 pm to 1:50 pm --> ('ECE313', [13, 10, 40], [0, 2, 4])
+        It is a list of 3 elements tuples of the form ('course_name', [start_hour, start_min,
+        the duration of the class in minutes], a list of all the day during which the course is given)
+        Example. If ECE 313 was given every monday, wednesday and friday from 1:10 pm to 1:50 pm -->
+        ('ECE313', [13, 10, 40], [0, 2, 4])
         """
-        ## First we get the list of all the classes that the student is taking
+        # First we get the list of all the classes that the student is taking
 
-
-        # course_detail = ['ECE110', [11, 0, 50], [0, 2]]
-        # start = (course_detail[1][0] * 60 + course_detail[1][1]) / 10
-        # end = (course_detail[1][0] * 60 + course_detail[1][1] + course_detail[1][2]) / 10
+        course_detail = ['ECE110', [11, 0, 50], [0, 2]]
+        start = (course_detail[1][0] * 60 + course_detail[1][1]) / 10
+        end = (course_detail[1][0] * 60 + course_detail[1][1] + course_detail[1][2]) / 10
 
         # if we are in the fall semester
         # so we have august, september, october, november, december
         if semester == "fall":
             # fill august
             for day in range(semester_start - 1, len(self.august)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.august[day][i] == None):
                         self.august[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill september
             for day in range(0, len(self.september)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.september[day][i] == None):
                         self.september[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill october
             for day in range(0, len(self.october)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.october[day][i] == None):
                         self.october[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill november
             for day in range(0, len(self.november)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.november[day][i] == None):
                         self.november[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill december
             for day in range(0, semester_end):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.december[day][i] == None):
                         self.december[day][i] = f"Lecture for {course_detail[0]}"
@@ -158,39 +159,61 @@ class Calendar:
         elif semester == 'spring':
             # fill january
             for day in range(semester_start - 1, len(self.january)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.january[day][i] == None):
                         self.january[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill february
             for day in range(0, len(self.february)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.february[day][i] == None):
                         self.february[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill march
             for day in range(0, len(self.march)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.march[day][i] == None):
                         self.march[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill april
             for day in range(0, len(self.april)):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.april[day][i] == None):
                         self.april[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
             # fill may
             for day in range(0, semester_end):
-                i = int(start - 1)
+                i = int(start)
                 while i < int(end):
                     if (self.may[day][i] == None):
                         self.may[day][i] = f"Lecture for {course_detail[0]}"
                     i += 1
+
+    def add_event_to_calendar(self, event_name, event_date, event_start_time, event_duration):
+        """
+        This function will be used to add different events in the calendar
+        event can be quiz, homework, job or anything
+        :param event_name: the name of the event # could be quiz or exam whatever
+        :param event_date: [month, day] like [3,14] march the 14th
+        :param event_start_time: [9,0] 9 o'clock
+        :param event_duration: given in minutes
+        :return: None, it just update the calendar
+        """
+        month = event_date[0]
+        day = event_date[1]
+        start = (event_start_time[0] * 60 + event_start_time[1]) / 10
+        end = (event_start_time[0] * 60 + event_start_time[1] + event_duration) / 10
+
+        i = int(start)
+        while i < int(end):
+            if (self.year_calendar[month - 1][day - 1][i] == None):
+                self.year_calendar[month - 1][day - 1][i] = event_name
+            i += 1
+
 
 
 # Elie = Information.Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "fall")
@@ -201,9 +224,7 @@ class Calendar:
 # # print(calendar.monthrange(2020, 3))
 
 my_cal = Calendar(2019)
-print(my_cal.view_month('january'))
+my_cal.add_event_to_calendar("quiz for 313", [1, 2], [23, 30], 30)
+print(my_cal.view_month('january')[1])
 
-num = [1, 2,3]
-print(num)
-print(num)
 
