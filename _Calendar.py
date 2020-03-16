@@ -63,6 +63,20 @@ class Calendar:
         for date in holiday_list:
             for time_slot in range(len(self.year_calendar[int(date[1]) - 1][int(date[2]) - 1])):
                 self.year_calendar[int(date[1]) - 1][int(date[2]) - 1][time_slot] = "Holiday"
+        ##### If Fall semester, account for Fall break
+        fall_break = (23, 1)
+        for day in range(22, len(self.november), 1):
+            for time_slot in range(len(self.november[day])):
+                self.november[day][time_slot] = "FallBreak"
+
+        for time_slot in range(len(self.december[0])):
+            self.december[0][time_slot] = "FallBreak"
+
+        ### If Spring, account for SpringBreak
+        spring_break = (16, 25)
+        for day in range(15, 26, 1):
+            for time_slot in range(len(self.march[day])):
+                self.march[day][time_slot] = "SpringBreak"
 
     def view_month(self, month):
         """
