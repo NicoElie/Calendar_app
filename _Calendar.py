@@ -16,11 +16,19 @@ class Calendar:
 
 
 class Calendar:
-    def __init__(self, year):
+    def __init__(self, year, semester, semester_start, semester_end):
         """
         Constructor of Calendar
-        :param year: an integer for the year
+        @:param year: an integer for the year
+        @:param semester will be used to determine the month we need to consider
+
+        @:param semester_start is the day the semester start
+
+        @:param semester_end is the day regular class ends (not the last day of final!)
         """
+        self.semester = semester
+        self.semester_start = semester_start
+        self.semester_end = semester_end
         self.january = []
         self.february = []
         self.march = []
@@ -94,16 +102,10 @@ class Calendar:
         elif month == 'december':
             return self.december
 
-    def fill_calendar_classes(self, semester, semester_start, semester_end, class_code, date_and_time):
+    def fill_calendar_classes(self, class_code, date_and_time):
         """
         This function is to fill the calendar with default activities for user such as the lectures
         The input for this function is the output of get_time_and_day from Information.py
-        @:param semester will be used to determine the month we need to consider
-
-        @:param semester_start is the day the semester start
-
-        @:param semester_end is the day regular class ends (not the last day of final!)
-
         @:param class_code the name code of the class like "ECE313" for example
 
         @:param date_and_time will be an array like [[13, 10, 40], [0, 2, 4]]
@@ -114,15 +116,14 @@ class Calendar:
         # First we get the list of all the classes that the student is taking
         week_day = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         course_detail = date_and_time   # come from get_time_and day function in Information.Course
-        print(course_detail)
         start = (course_detail[0][0] * 60 + course_detail[0][1]) / 10
         end = (course_detail[0][0] * 60 + course_detail[0][1] + course_detail[0][2]) / 10
 
         # if we are in the fall semester
         # so we have august, september, october, november, december
-        if semester == "fall":
+        if self.semester == "fall":
             # fill august
-            for day in range(semester_start - 1, len(self.august)):
+            for day in range(self.semester_start - 1, len(self.august)):
                 # we need to check for week days, for example a course can only happen on Tuesday and Thursday
                 # we check for that in the following code
                 set_day = datetime.datetime.strptime(f"{day + 1} 08 {self.year}", '%d %m %Y').weekday()
@@ -178,7 +179,7 @@ class Calendar:
                                 self.november[day][i] = f"{class_code}"  # come from get_course_code
                             i += 1
             # fill december
-            for day in range(0, semester_end):
+            for day in range(0, self.semester_end):
                 # we need to check for week days, for example a course can only happen on Tuesday and Thursday
                 # we check for that in the following code
                 set_day = datetime.datetime.strptime(f"{day + 1} 12 {self.year}", '%d %m %Y').weekday()
@@ -191,9 +192,9 @@ class Calendar:
                             if (self.december[day][i] == None):
                                 self.december[day][i] = f"{class_code}"  # come from get_course_code
                             i += 1
-        elif semester == 'spring':
+        elif self.semester == 'spring':
             # fill january
-            for day in range(semester_start - 1, len(self.january)):
+            for day in range(self.semester_start - 1, len(self.january)):
                 # we need to check for week days, for example a course can only happen on Tuesday and Thursday
                 # we check for that in the following code
                 set_day = datetime.datetime.strptime(f"{day + 1} 01 {self.year}", '%d %m %Y').weekday()
@@ -249,7 +250,7 @@ class Calendar:
                                 self.april[day][i] = f"{class_code}"  # come from get_course_code
                             i += 1
             # fill may
-            for day in range(0, semester_end):
+            for day in range(0, self.semester_end):
                 # we need to check for week days, for example a course can only happen on Tuesday and Thursday
                 # we check for that in the following code
                 set_day = datetime.datetime.strptime(f"{day + 1} 05 {self.year}", '%d %m %Y').weekday()
@@ -266,8 +267,8 @@ class Calendar:
     def add_event_to_calendar(self, event_name, event_date, event_start_time, event_duration):
         """
         This function will be used to add different events in the calendar
-        event can be quiz, homework, job or anything
-        :param event_name: the name of the event # could be quiz or exam whatever
+        event can anything, meeting with a friend or other things
+        :param event_name: the name of the event # could be exam whatever
         :param event_date: [month, day] like [3,14] march the 14th
         :param event_start_time: [9,0] 9 o'clock
         :param event_duration: given in minutes
@@ -317,25 +318,182 @@ class Calendar:
                         self.year_calendar[month - 1][day][j] = event_name
                 j += 1
 
+    def fill_calendar_quiz(self, quiz_name, quiz_date, quiz_start_time_and_duration):
+        """
+                This function will be used to add different events in the calendar
+                event can anything, meeting with a friend or other things
+                :param quiz_name: the name of the event # could be quiz or exam whatever
+                :param quiz_date: [0, 1] means monday and tuesday
+                :param quiz_start_time_and_duration: [9,0] 9 o'clock
+                :return: None, it just update the calendar
+        """
+        # First we get the list of all the classes that the student is taking
+        week_day = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        course_detail = [quiz_start_time_and_duration, quiz_date]
+        # from get_quiz_start_time_and_duration we take the first two element
+        # last element of get_quiz_start_time_and_duration will replace course_detail[0][2]
+        start = (course_detail[0][0] * 60 + course_detail[0][1]) / 10
+        end = (course_detail[0][0] * 60 + course_detail[0][1] + course_detail[0][2]) / 10
 
-# Elie = Information.Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "fall")
-test = Calendar(2020)
+        # if we are in the fall semester
+        # so we have august, september, october, november, december
+        if self.semester == "fall":
+            # fill august
+            for day in range(self.semester_start - 1, len(self.august)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 08 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.august[day][i] == None):
+                                self.august[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill september
+            for day in range(0, len(self.september)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 09 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.september[day][i] == None):
+                                self.september[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill october
+            for day in range(0, len(self.october)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 10 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.october[day][i] == None):
+                                self.october[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill november
+            for day in range(0, len(self.november)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 11 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.november[day][i] == None):
+                                self.november[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill december
+            for day in range(0, self.semester_end):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 12 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.december[day][i] == None):
+                                self.december[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+        elif self.semester == 'spring':
+            # fill january
+            for day in range(self.semester_start - 1, len(self.january)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 01 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.january[day][i] == None):
+                                self.january[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill february
+            for day in range(0, len(self.february)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 02 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.february[day][i] == None):
+                                self.february[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill march
+            for day in range(0, len(self.march)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 03 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.march[day][i] == None):
+                                self.march[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill april
+            for day in range(0, len(self.april)):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 04 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.april[day][i] == None):
+                                self.april[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+            # fill may
+            for day in range(0, self.semester_end):
+                # we need to check for week days, for example a course can only happen on Tuesday and Thursday
+                # we check for that in the following code
+                set_day = datetime.datetime.strptime(f"{day + 1} 05 {self.year}", '%d %m %Y').weekday()
+                day_check = (calendar.day_name[set_day])
+                for j in course_detail[1]:  # course_detail[1] store the week days as number, ex: 0 means monday
+                    # we check if the actual date is the week day we need for that course
+                    if day_check == week_day[j]:  # if true, then we add class at that time
+                        i = int(start)
+                        while i < int(end):
+                            if (self.may[day][i] == None):
+                                self.may[day][i] = f"{quiz_name}"  # come from get_course_code
+                            i += 1
+
+# -------------------------------------------------------------------------------------------------------------------#
+
+
+Elie_Calendar = Calendar(2020, 'spring', 21, 13)
 course1 = Information.Course("Intro to Elec", "ECE110", "AL1")
+course1.add_quiz([0, 2], [0, 0, 50], "CBTF")
 course = course1.get_time_and_day()
 code = course1.get_course_code()
-test.fill_calendar_classes("fall", 12, 13, code, course)
-print(test.view_month('august')[11])  # this check for the 12
+Elie_Calendar.fill_calendar_quiz(course1.get_quiz_name(), course1.get_quiz_date(),
+                                 course1.get_quiz_start_time_and_duration())
+print(Elie_Calendar.view_month('january')[26])
 print("-----------------------------------------------------------")
-print(test.view_month('september')[10])  # check for 11
+print(Elie_Calendar.view_month('february')[17])
 print('---------------------------------------------------------')
-print(test.view_month('december')[6])  # check for 7
-
-#print(calendar.monthrange(2020, 3))
-
-#my_cal = Calendar(2019)
-#my_cal.add_event_to_calendar("quiz for 313", [1, 31], [0, 0], 40)
-#print(my_cal.view_month('january')[30])  # january 31
-#print('------------------------------------------')
-#print(my_cal.view_month('february')[0])  # february first
+print(Elie_Calendar.view_month('march')[22])
 
 
