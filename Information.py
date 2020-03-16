@@ -323,9 +323,6 @@ class Quiz:
 
 
 
-
-
-
 Elie = Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "spring")
 Elie.add_course("ECE110")
 course_d = Elie.get_student_courses()[0]

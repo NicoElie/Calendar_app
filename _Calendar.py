@@ -66,6 +66,21 @@ class Calendar:
             for time_slot in range(len(self.year_calendar[int(date[1]) - 1][int(date[2]) - 1])):
                 self.year_calendar[int(date[1]) - 1][int(date[2]) - 1][time_slot] = "Holiday"
 
+        ##### If Fall semester, account for Fall break
+        fall_break = (23, 1)
+        for day in range(22, len(self.november), 1):
+            for time_slot in range(len(self.november[day])):
+                self.november[day][time_slot] = "FallBreak"
+
+        for time_slot in range(len(self.december[0])):
+            self.december[0][time_slot] = "FallBreak"
+
+        ### If Spring, account for SpringBreak
+        spring_break = (16, 25)
+        for day in range(15, 26, 1):
+            for time_slot in range(len(self.march[day])):
+                self.march[day][time_slot] = "SpringBreak"
+
     def view_month(self, month):
         """
         This function is to get the calendar of the month requested by user
@@ -93,6 +108,8 @@ class Calendar:
             return self.september
         elif month == 'october':
             return self.october
+        elif month == 'november':
+            return self.november
         elif month == 'december':
             return self.december
 
@@ -258,8 +275,8 @@ class Calendar:
 
 my_cal = Calendar(2019)
 my_cal.add_event_to_calendar("quiz for 313", [1, 31], [23, 40], 40)
-print(my_cal.view_month('january')[30])  # january 31
+print(my_cal.view_month('november'))  # january 31
 print('------------------------------------------')
-print(my_cal.view_month('february')[0])  # february first
+# print(my_cal.view_month('march'))  # february first
 
 
