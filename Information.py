@@ -142,8 +142,8 @@ class Course:
         for char in my_info_tuple[1]:
             days_list.append(day_to_number[char])
             # return will be something like:
-            # ('ECE313', [9,0,50], [0, 2, 4])
-        return self.course_name, [hour_start, minute_start, duration], days_list
+            # [9,0,50], [0, 2, 4])
+        return [hour_start, minute_start, duration], days_list
 
     @staticmethod
     def homework_deadline(has_homework, deadline):
@@ -322,17 +322,20 @@ class Quiz:
         return self.duration
 
 
-
-
-
-
+# create a student
 Elie = Student("Elie", "Masanka", "masanka2@illinois.edu", "23", "Statistics", "spring")
-Elie.add_course("ECE110")
-course_d = Elie.get_student_courses()[0]
-ECE110 = Course("ECE110", course_d, "AL1")
-ECE110.exam_date(has_exam=False)
-print(ECE110.lab_deadline(has_lab=True, deadline=6))
-job = Activity("Work", [9, 0], 50, 0)
-job.set_activity_month(6)
-print(job.get_month())
-#print(ECE110.get_time_and_day())
+# create a course for Elie
+course1 = Course("Intro to Elec", "ECE110", "AL1")
+# add the course into Elie
+Elie.add_course(course1.get_course_code())
+# check if it is added correctly
+print(Elie.get_student_courses())
+print(course1.get_time_and_day())
+# course_d = Elie.get_student_courses()[0]
+# ECE110 = Course("ECE110", "ECE110", "AL1")
+# ECE110.add_course("ECE110")
+# print(Elie.get_student_courses())
+# ECE110_homework = Homework("ECE110_HW", [3, 15])
+# d = ECE110.homework_deadline(has_homework=True, deadline=ECE110_homework)
+# Elie.add_course(ECE110)
+# print(Elie.get_student_courses()[0])
